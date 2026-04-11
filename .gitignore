@@ -1,0 +1,6 @@
+/cart/
+__pycache__/
+*.bak
+build/
+dist/
+.DS_Store
