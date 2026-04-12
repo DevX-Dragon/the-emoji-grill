@@ -1,61 +1,94 @@
-const emojiAlphabet = [
-    '🍎', '🥓', '🧀', '🍩', '🥚', '🍟', '🍇', '🍯', '🍦', '🍭',
-    ' kiwi', '🍋', '🍄', '🥜', '🍊', '🍕', '🍳', '🍙', '🍓', '🌮',
-    '🍲', '🥦', '🥨', '🍬', '🍿', '🍱'
-];
+const emojiAlphabet = ['🍎', '🥓', '🧀', '🍩', '🥚', '🍟', '🍇', '🍯', '🍦', '🍭', ' kiwi', '🍋', '🍄', '🥜', '🍊', '🍕', '🍳', '🍙', '🍓', '🌮', '🍲', '🥦', '🥨', '🍬', '🍿', '🍱'];
+const alpha = "abcdefghijklmnopqrstuvwxyz";
 
-const charMap = "abcdefghijklmnopqrstuvwxyz";
+const playSnd = (id) => {
+    const s = document.getElementById(id);
+    if (!s) return;
+    s.currentTime = 0;
+    s.play().catch(() => {});
+};
 
-let typingTimer;
-const statusEl = document.getElementById('status');
+const updateStatus = (msg) => {
+    const status = document.getElementById('status-display');
+    status.innerHTML = `${msg}<span class="cursor">_</span>`;
+};
 
-function handleTyping(msg) {
-    statusEl.innerText = "STATUS: " + msg;
-    statusEl.classList.add('is-typing');
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
-        statusEl.innerText = "STATUS: READY ✅";
-        statusEl.classList.remove('is-typing');
-    }, 1000);
+// Typing indicators for Pass field
+document.getElementById('passField').addEventListener('input', (e) => {
+    const val = e.target.value;
+    const bar = document.getElementById('heat-fill');
+    const label = document.getElementById('heat-text');
+    const strength = Math.min(val.length * 10, 100);
+    
+    bar.style.width = strength + "%";
+    label.innerText = `VOLTAGE: ${(strength * 0.12).toFixed(1)}V`;
+    
+    updateStatus("INJECTING_SALT");
+    playSnd('snd-click');
+
+    clearTimeout(window.typeTimer);
+    window.typeTimer = setTimeout(() => updateStatus("SYS_READY"), 1000);
+});
+
+document.getElementById('inputField').addEventListener('input', () => {
+    updateStatus("PREPPING_INGREDIENTS");
+    clearTimeout(window.typeTimer);
+    window.typeTimer = setTimeout(() => updateStatus("SYS_READY"), 1000);
+});
+
+function cook(text, salt) {
+    let res = "";
+    let sIdx = 0;
+    for (let c of text.toLowerCase()) {
+        const idx = alpha.indexOf(c);
+        if (idx === -1) { res += c; continue; }
+        const shift = alpha.indexOf(salt[sIdx % salt.length].toLowerCase());
+        res += emojiAlphabet[(idx + shift) % 26];
+        sIdx++;
+    }
+    return res;
+}
+
+function eat(emojiText, salt) {
+    let res = "";
+    let sIdx = 0;
+    const arr = [...emojiText];
+    for (let e of arr) {
+        const idx = emojiAlphabet.indexOf(e);
+        if (idx === -1) { res += e; continue; }
+        const shift = alpha.indexOf(salt[sIdx % salt.length].toLowerCase());
+        res += alpha[(idx - shift + 26) % 26];
+        sIdx++;
+    }
+    return res;
 }
 
 function run(mode) {
-    const input = document.getElementById('inputField').value.toLowerCase();
-    const pass = document.getElementById('passField').value.toLowerCase();
+    const input = document.getElementById('inputField').value;
+    const salt = document.getElementById('passField').value.trim();
     const output = document.getElementById('outputField');
 
-    if (!input || !pass) {
-        statusEl.innerText = "STATUS: NEED SALT & MESSAGE! 🧂";
+    if (!input || !salt) {
+        updateStatus("ERROR: NULL_DATA");
         return;
     }
 
-    let result = "";
-    for (let i = 0; i < input.length; i++) {
-        let char = input[i];
-        let charIndex = charMap.indexOf(char);
-
-        if (charIndex === -1) {
-            result += char; // Keep spaces/numbers as they are
-            continue;
-        }
-
-        // Use the password to find the "Shift"
-        let passChar = pass[i % pass.length];
-        let shift = charMap.indexOf(passChar);
-
-        if (mode === 'encrypt') {
-            // New Index = (Current + Shift) % 26
-            let newIndex = (charIndex + shift) % 26;
-            result += emojiAlphabet[newIndex];
-        } else {
-            // Decoding is trickier because we have to find the emoji index first
-            let emojiIndex = emojiAlphabet.indexOf(input.split(/([\uD800-\uDBFF][\uDC00-\uDFFF])/).filter(Boolean)[i]); 
-            // Simplified decryption for standard text:
-            let decryptIndex = (charIndex - shift + 26) % 26;
-            result += charMap[decryptIndex];
-        }
+    if (mode === 'encrypt') {
+        playSnd('snd-sizzle');
+        output.value = cook(input, salt);
+        updateStatus("ORDER_COOKED");
+    } else {
+        playSnd('snd-ding');
+        output.value = eat(input, salt);
+        updateStatus("ORDER_SERVED");
     }
+}
 
-    output.value = result;
-    statusEl.innerText = mode === 'encrypt' ? "STATUS: SEASONED & COOKED! 🔥" : "STATUS: TASTE TEST PASSED! 👅";
+function copyText() {
+    const el = document.getElementById('outputField');
+    if (!el.value) return;
+    el.select();
+    navigator.clipboard.writeText(el.value);
+    updateStatus("CLIPBOARD_PULLED");
+    setTimeout(() => updateStatus("SYS_READY"), 2000);
 }
