@@ -13,7 +13,6 @@ const updateStatus = (msg) => {
     status.innerHTML = `${msg}<span class="cursor">_</span>`;
 };
 
-// Typing indicators for Pass field
 document.getElementById('passField').addEventListener('input', (e) => {
     const val = e.target.value;
     const bar = document.getElementById('heat-fill');
