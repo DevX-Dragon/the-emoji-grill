@@ -1,0 +1,147 @@
+body {
+    background-color: #FF4747;
+    font-family: 'Space Mono', monospace;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 40px 15px;
+    box-sizing: border-box;
+}
+
+/* 3D Stickers */
+.sticker {
+    position: fixed;
+    z-index: 100;
+    pointer-events: auto;
+    filter: drop-shadow(12px 12px 0px rgba(0,0,0,0.3));
+    transition: transform 0.2s ease;
+}
+
+.sticker img {
+    width: clamp(100px, 25vw, 180px);
+    height: auto;
+    display: block;
+}
+
+/* Floating/Wobbling Animations */
+@keyframes floatWobble {
+    0% { transform: translateY(0) rotate(-5deg); }
+    25% { transform: translateY(-10px) rotate(5deg) scale(1.05); }
+    50% { transform: translateY(-20px) rotate(-3deg); }
+    75% { transform: translateY(-10px) rotate(8deg) scale(0.95); }
+    100% { transform: translateY(0) rotate(-5deg); }
+}
+
+@keyframes menuFloat {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(0.5deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes statusPulse {
+    0% { transform: scale(1) rotate(0deg); background: #000; }
+    50% { transform: scale(1.05) rotate(2deg); background: #FFDE59; color: #000; }
+    100% { transform: scale(1) rotate(0deg); background: #000; }
+}
+
+.s1 { top: 5%; left: -20px; animation: floatWobble 5s infinite ease-in-out; }
+.s2 { bottom: 8%; right: -30px; animation: floatWobble 6s infinite ease-in-out; animation-delay: 0.5s; }
+.s3 { top: 15%; right: -40px; animation: floatWobble 7s infinite ease-in-out; animation-delay: 1.2s; }
+.s4 { bottom: 5%; left: -10px; animation: floatWobble 5.5s infinite ease-in-out; animation-delay: 2s; }
+
+/* Main Card */
+.counter {
+    background: white;
+    border: 6px solid black;
+    padding: 25px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 15px 15px 0px #000;
+    position: relative;
+    z-index: 10;
+    margin-top: 20px;
+    animation: menuFloat 4s infinite ease-in-out;
+}
+
+h1 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 2rem;
+    margin: 0;
+    color: #FFDE59;
+    text-shadow: 3px 3px 0px #000;
+    text-align: center;
+}
+
+#status {
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin: 12px 0;
+    text-align: center;
+    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    min-height: 1.2em;
+    transition: all 0.3s ease;
+}
+
+.is-typing {
+    animation: statusPulse 0.4s infinite ease-in-out;
+}
+
+.label {
+    font-weight: bold;
+    font-size: 0.7rem;
+    margin-top: 15px;
+    display: block;
+    text-transform: uppercase;
+}
+
+textarea, input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 4px solid black;
+    padding: 12px;
+    font-family: 'Space Mono', monospace;
+    background: #fff;
+    outline: none;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+textarea { height: 90px; resize: none; }
+
+.btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 1.2rem;
+    padding: 15px;
+    border: 4px solid black;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #000;
+    transition: 0.1s;
+}
+
+button:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+.encrypt-btn { background: #FFDE59; }
+.decrypt-btn { background: #5CE1E6; }
+.copy-btn { background: #7ED957; width: 100%; margin-top: 15px; }
+
+@media (max-width: 500px) {
+    .s1, .s4 { left: -40px; }
+    .s2, .s3 { right: -40px; }
+}

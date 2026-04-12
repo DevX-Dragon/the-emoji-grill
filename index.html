@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SALTED SECRET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sticker s1"><img src="https://cdn.hackclub.com/019d7d6e-4e66-7292-b02b-1ec8fa56bd4c/image.png"></div>
+    <div class="sticker s2"><img src="https://cdn.hackclub.com/019d7d6e-5031-7429-8655-2f62bf756d91/image.png"></div>
+    <div class="sticker s3"><img src="https://cdn.hackclub.com/019d7d6e-51f8-7609-864a-757da899be44/image.png"></div>
+    <div class="sticker s4"><img src="https://cdn.hackclub.com/019d7d71-91a5-78a5-aaa9-dc41a05d6191/image.png"></div>
+
+    <div class="counter">
+        <h1>SALTED SECRET</h1>
+        <div id="status">STATUS: READY TO COOK</div>
+        
+        <span class="label">RAW TEXT / EMOJIS:</span>
+        <textarea id="inputField" placeholder="Drop it here..." oninput="handleTyping('CHEF IS PREPPING... 🔪')"></textarea>
+        
+        <span class="label">SECRET SALT:</span>
+        <input type="text" id="passField" placeholder="Enter password" oninput="handleTyping('ADDING SEASONING... 🧂')">
+        
+        <div class="btn-group">
+            <button class="encrypt-btn" onclick="run('encrypt')">COOK 🍳</button>
+            <button class="decrypt-btn" onclick="run('decrypt')">EAT 🍽️</button>
+        </div>
+
+        <span class="label">RESULT:</span>
+        <textarea id="outputField" readonly placeholder="Output..."></textarea>
+        <button class="copy-btn" onclick="copyText()">COPY TRAY 📋</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
