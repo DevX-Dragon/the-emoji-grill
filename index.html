@@ -2,49 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Emoji Grill</title>
-    <link rel="icon" type="image/png" href="https://cdn.hackclub.com/019d8220-34ca-77ec-a36f-1be2d90152e4/image.png"
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Emoji Grill </title>
+    <link rel="icon" type="image/png" href="https://cdn.hackclub.com/019d7d6e-4e66-7292-b02b-1ec8fa56bd4c/image.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body>
-
+<body id="mainBody">
     <div class="chaos-overlay"></div>
-
+    
     <div class="sticker s1"><img src="https://cdn.hackclub.com/019d7d6e-4e66-7292-b02b-1ec8fa56bd4c/image.png"></div>
     <div class="sticker s2"><img src="https://cdn.hackclub.com/019d7d6e-5031-7429-8655-2f62bf756d91/image.png"></div>
-    <div class="sticker s3"><img src="https://cdn.hackclub.com/019d7d6e-51f8-7609-864a-757da899be44/image.png"></div>
-    <div class="sticker s4"><img src="https://cdn.hackclub.com/019d7d71-91a5-78a5-aaa9-dc41a05d6191/image.png"></div>
 
-    <div class="motherboard">
+    <div class="motherboard" id="board">
         <header>
-            <h1 class="neon-text">Emoji Grill</h1>
-            <div id="status-display">Grill Heating 🔥</div>
+            <div class="header-top">
+                <h1>The Emoji Grill</h1>
+                <button class="btn-stealth" onclick="toggleStealth()">[ STEALTH ]</button>
+            </div>
+            <div id="status-display">Grill Heated</div>
         </header>
 
-        <div class="gauge-sector">
-            <div id="heat-fill"></div>
-            <span id="heat-text">VOLTAGE: 0.0V</span>
+        <div class="instruction-panel">
+            <button class="btn-help" onclick="toggleHelp()">HOW TO USE [?]</button>
+            <div id="help-content">
+                <ul>
+                    <li>🍳 <strong>COOK:</strong> Input text, enter Salt, hit COOK.</li>
+                    <li>🍽️ <strong>EAT:</strong> Paste emojis + Salt, hit EAT.</li>
+                    <li>🎨 <strong>THEME:</strong> Themes are auto-detected on decrypt.</li>
+                    <li>💣 <strong>WIPE:</strong> Purge memory and explode interface.</li>
+                </ul>
+            </div>
         </div>
 
         <div class="io-zone">
-            <label>INPUT_RAW_DATA</label>
-            <textarea id="inputField" placeholder="FEED THE MACHINE..."></textarea>
+            <label class="section-label">FLAVOR THEME</label>
+            <select id="themeSelect" onchange="changeTheme()">
+                <option value="kitchen">KITCHEN (Food)</option>
+                <option value="chaos">TOTAL_CHAOS (Dark)</option>
+                <option value="fusion">FUSION (Tropical)</option>
+            </select>
 
-            <label>ENCRYPTION_SALT</label>
-            <input type="text" id="passField" placeholder="SEASONING...">
+            <div class="file-sector">
+                <button class="btn-file" onclick="document.getElementById('fileInput').click()">[+] ATTACH_FILE</button>
+                <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(this)">
+                <span id="file-name-display">NO_FILE_LOADED</span>
+            </div>
+
+            <textarea id="inputField" placeholder="Enter text or emojis..."></textarea>
+            
+            <label class="section-label">AUTHENTICATION SALT</label>
+            <div class="salt-input-group">
+                <input type="password" id="passField" placeholder="Salt code..." oninput="checkSaltStrength()">
+                <div class="salt-controls">
+                    <button id="togglePass" class="salt-btn" onclick="togglePassword()">👁️</button>
+                    <button class="salt-btn btn-gen" onclick="generatePass()">⚡</button>
+                </div>
+            </div>
+            <div class="strength-meter">
+                <div id="strength-bar"></div>
+                <span id="strength-text">SALT_LEVEL: EMPTY</span>
+            </div>
             
             <div class="action-grid">
-                <button class="btn-cook" onclick="run('encrypt')">COOK 🍳</button>
-                <button class="btn-eat" onclick="run('decrypt')">EAT 🍽️</button>
+                <button class="btn-cook" onclick="handleAction('encrypt')">COOK</button>
+                <button class="btn-eat" onclick="handleAction('decrypt')">EAT</button>
             </div>
 
-            <label>OUTPUT_STREAM</label>
-            <div class="result-box">
-                <textarea id="outputField" readonly placeholder="AWAITING_INPUT"></textarea>
+            <div id="qr-container" class="hidden">
+                <div id="qrcode"></div>
+                <button class="btn-close-qr" onclick="toggleQR(false)">CLOSE QR</button>
             </div>
-            <button class="btn-copy" onclick="copyText()">PRINT_RECEIPT 📋</button>
+
+            <textarea id="outputField" readonly placeholder="Resulting cipher..."></textarea>
+            
+            <div class="footer-actions">
+                <button class="btn-copy" onclick="copyText()">GRAB 📋</button>
+                <button class="btn-qr" onclick="generateQRCode()">QR 📱</button>
+            </div>
+            
+            <button class="btn-wipe" onclick="triggerExplosion()">WIPE ENGINE 💣</button>
+        </div>
+    </div>
+
+    <div id="panic-overlay" class="hidden">
+        <div class="panic-box">
+            <h2 class="panic-title">WIPE_PENDING</h2>
+            <div id="panic-timer">3</div>
         </div>
     </div>
 
